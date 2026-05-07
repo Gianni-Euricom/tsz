@@ -20,6 +20,32 @@ using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<AnimalDbContext>();
     db.Database.EnsureCreated();
+
+    if (!await db.Animals.AnyAsync())
+    {
+        var species = new[]
+        {
+            "Dog", "Cat", "Rabbit", "Hamster", "Parrot",
+            "Turtle", "Goldfish", "Horse", "Cow", "Sheep"
+        };
+        var names = new[]
+        {
+            "Bella", "Max", "Luna", "Charlie", "Lucy", "Cooper", "Daisy", "Milo",
+            "Bailey", "Sadie", "Buddy", "Molly", "Rocky", "Zoe", "Jack", "Lily",
+            "Toby", "Ruby", "Duke", "Rosie"
+        };
+
+        var random = new Random(42);
+        var animals = Enumerable.Range(0, 100).Select(i => new Animal
+        {
+            Name = $"{names[random.Next(names.Length)]} {i + 1}",
+            Species = species[random.Next(species.Length)],
+            Age = random.Next(0, 21)
+        });
+
+        await db.Animals.AddRangeAsync(animals);
+        await db.SaveChangesAsync();
+    }
 }
 
 app.UseCors(policy => policy
