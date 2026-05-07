@@ -1,4 +1,4 @@
-import { createFileRoute } from '@tanstack/react-router';
+import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import { getAnimals, type AnimalDTO } from '#/api/animals';
 
 export const Route = createFileRoute('/animals')({
@@ -11,6 +11,7 @@ export const Route = createFileRoute('/animals')({
 
 function Animals() {
   const animals = Route.useLoaderData();
+  const navigate = useNavigate();
 
   return (
     <main>
@@ -25,7 +26,11 @@ function Animals() {
         </thead>
         <tbody>
           {animals.map((animal: AnimalDTO) => (
-            <tr key={animal.id} className="border-b last:border-0">
+            <tr
+              key={animal.id}
+              onClick={() => navigate({ to: '/animal/$id', params: { id: String(animal.id) } })}
+              className="cursor-pointer border-b last:border-0 hover:bg-gray-50"
+            >
               <td className="py-2">{animal.name}</td>
               <td className="py-2">{animal.species}</td>
               <td className="py-2">{animal.age}</td>
