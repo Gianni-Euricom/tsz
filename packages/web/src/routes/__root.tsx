@@ -2,8 +2,12 @@ import { HeadContent, Link, Outlet, Scripts, createRootRoute } from '@tanstack/r
 
 import appCss from '../styles.css?url';
 import { ErrorBoundary } from '#/components/error-boundary';
+import { ThemeProvider } from '#/components/theme-provider';
+import { ThemeToggle } from '#/components/theme-toggle';
 import { Button } from '#/components/ui/button';
 import { Card, CardDescription, CardHeader, CardTitle } from '#/components/ui/card';
+
+const themeInitScript = `(function(){try{var s=localStorage.getItem('theme');var t=(s==='dark'||s==='light')?s:(window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');document.documentElement.classList.add(t);}catch(e){}})();`;
 
 export const Route = createRootRoute({
   head: () => ({
@@ -31,9 +35,10 @@ export const Route = createRootRoute({
 
 function RootDocument({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <head>
         <HeadContent />
+        <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
       </head>
       <body>
         {children}
@@ -45,20 +50,25 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 
 function RootLayout() {
   return (
-    <div className="mx-auto max-w-3xl p-6">
-      <nav className="mb-6 flex gap-2">
-        <Button asChild variant="ghost" size="sm">
-          <Link to="/" className="[&.active]:font-bold">
-            Home
-          </Link>
-        </Button>
-        <Button asChild variant="ghost" size="sm">
-          <Link to="/animals" className="[&.active]:font-bold">
-            Animals
-          </Link>
-        </Button>
-      </nav>
-      <Outlet />
-    </div>
+    <ThemeProvider>
+      <div className="mx-auto max-w-3xl p-6">
+        <nav className="mb-6 flex items-center justify-between">
+          <div className="flex gap-2">
+            <Button asChild variant="ghost" size="sm">
+              <Link to="/" className="[&.active]:font-bold">
+                Home
+              </Link>
+            </Button>
+            <Button asChild variant="ghost" size="sm">
+              <Link to="/animals" className="[&.active]:font-bold">
+                Animals
+              </Link>
+            </Button>
+          </div>
+          <ThemeToggle />
+        </nav>
+        <Outlet />
+      </div>
+    </ThemeProvider>
   );
 }
