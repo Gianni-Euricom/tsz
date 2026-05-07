@@ -2,6 +2,8 @@ import { HeadContent, Link, Outlet, Scripts, createRootRoute } from '@tanstack/r
 
 import appCss from '../styles.css?url';
 import { ErrorBoundary } from '#/components/error-boundary';
+import { Button } from '#/components/ui/button';
+import { Card, CardDescription, CardHeader, CardTitle } from '#/components/ui/card';
 
 export const Route = createRootRoute({
   head: () => ({
@@ -17,8 +19,12 @@ export const Route = createRootRoute({
   errorComponent: ErrorBoundary,
   notFoundComponent: () => (
     <main>
-      <h1 className="text-2xl font-bold">Page not found</h1>
-      <p className="mt-2 text-gray-600">The page you're looking for doesn't exist.</p>
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-2xl">Page not found</CardTitle>
+          <CardDescription>The page you're looking for doesn't exist.</CardDescription>
+        </CardHeader>
+      </Card>
     </main>
   ),
 });
@@ -40,13 +46,17 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 function RootLayout() {
   return (
     <div className="mx-auto max-w-3xl p-6">
-      <nav className="mb-6 flex gap-4 text-sm">
-        <Link to="/" className="[&.active]:font-bold">
-          Home
-        </Link>
-        <Link to="/animals" className="[&.active]:font-bold">
-          Animals
-        </Link>
+      <nav className="mb-6 flex gap-2">
+        <Button asChild variant="ghost" size="sm">
+          <Link to="/" className="[&.active]:font-bold">
+            Home
+          </Link>
+        </Button>
+        <Button asChild variant="ghost" size="sm">
+          <Link to="/animals" className="[&.active]:font-bold">
+            Animals
+          </Link>
+        </Button>
       </nav>
       <Outlet />
     </div>

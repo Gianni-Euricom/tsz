@@ -1,12 +1,17 @@
 import { createFileRoute } from '@tanstack/react-router';
+import { Card, CardDescription, CardHeader, CardTitle } from '#/components/ui/card';
 
 export const Route = createFileRoute('/')({ component: Home });
 
 function Home() {
   return (
     <main>
-      <h1 className="text-2xl font-bold">Welcome</h1>
-      <p className="mt-2 text-gray-600">A simple TanStack Start app.</p>
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-2xl">Welcome</CardTitle>
+          <CardDescription>A simple TanStack Start app.</CardDescription>
+        </CardHeader>
+      </Card>
     </main>
   );
 }

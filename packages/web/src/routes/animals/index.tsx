@@ -1,6 +1,7 @@
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import { createServerFn } from '@tanstack/react-start';
 import { getAnimals, type AnimalDTO } from '#/api/animals';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '#/components/ui/table';
 
 const fetchAnimals = createServerFn({ method: 'GET' }).handler(async () => {
   const { data } = await getAnimals();
@@ -19,28 +20,28 @@ function Animals() {
   return (
     <main>
       <h1 className="text-2xl font-bold">Animals</h1>
-      <table className="mt-4 w-full text-left text-sm">
-        <thead>
-          <tr className="border-b">
-            <th className="pb-2 font-semibold">Name</th>
-            <th className="pb-2 font-semibold">Species</th>
-            <th className="pb-2 font-semibold">Age</th>
-          </tr>
-        </thead>
-        <tbody>
+      <Table className="mt-4">
+        <TableHeader>
+          <TableRow>
+            <TableHead>Name</TableHead>
+            <TableHead>Species</TableHead>
+            <TableHead>Age</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
           {animals.map((animal: AnimalDTO) => (
-            <tr
+            <TableRow
               key={animal.id}
               onClick={() => navigate({ to: '/animals/$id', params: { id: String(animal.id) } })}
-              className="cursor-pointer border-b last:border-0 hover:bg-gray-50"
+              className="cursor-pointer"
             >
-              <td className="py-2">{animal.name}</td>
-              <td className="py-2">{animal.species}</td>
-              <td className="py-2">{animal.age}</td>
-            </tr>
+              <TableCell>{animal.name}</TableCell>
+              <TableCell>{animal.species}</TableCell>
+              <TableCell>{animal.age}</TableCell>
+            </TableRow>
           ))}
-        </tbody>
-      </table>
+        </TableBody>
+      </Table>
     </main>
   );
 }

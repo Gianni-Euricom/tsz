@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import { useRouter, type ErrorComponentProps } from '@tanstack/react-router';
+import { Alert, AlertDescription, AlertTitle } from '#/components/ui/alert';
 import { Button } from '#/components/ui/button';
 
 function formatError(error: unknown): {
@@ -33,15 +34,17 @@ export function ErrorBoundary({ error, reset }: ErrorComponentProps) {
   }, [info]);
 
   return (
-    <main className="rounded-md border border-destructive/30 bg-destructive/5 p-6">
-      <h1 className="text-2xl font-bold text-destructive">Something went wrong</h1>
-      <p className="mt-2 text-sm text-muted-foreground">
-        <span className="font-mono">{info.name}:</span> {info.message}
-      </p>
+    <main className="space-y-4">
+      <Alert variant="destructive">
+        <AlertTitle>Something went wrong</AlertTitle>
+        <AlertDescription>
+          <span className="font-mono">{info.name}:</span> {info.message}
+        </AlertDescription>
+      </Alert>
       {import.meta.env.DEV && info.stack ? (
-        <pre className="mt-4 max-h-64 overflow-auto rounded bg-muted p-3 text-xs">{info.stack}</pre>
+        <pre className="max-h-64 overflow-auto rounded-md bg-muted p-3 text-xs">{info.stack}</pre>
       ) : null}
-      <div className="mt-4 flex gap-2">
+      <div className="flex gap-2">
         <Button
           onClick={() => {
             reset();
