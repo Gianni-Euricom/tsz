@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useForm } from '@tanstack/react-form';
 import { createFileRoute, Link, notFound, useRouter } from '@tanstack/react-router';
 import { createServerFn } from '@tanstack/react-start';
 import { ArrowLeft, Pencil } from 'lucide-react';
@@ -18,11 +19,14 @@ const fetchAnimal = createServerFn({ method: 'GET' })
     return data;
   });
 
-const updateAnimalSchema = z.object({
+const animalFormSchema = z.object({
+  name: z.string().min(1, 'Name is required').max(100),
+  species: z.string().min(1, 'Species is required').max(100),
+  age: z.number().int('Age must be a whole number').min(0, 'Age cannot be negative').max(200),
+});
+
+const updateAnimalSchema = animalFormSchema.extend({
   id: z.number().int().positive(),
-  name: z.string().min(1).max(100),
-  species: z.string().min(1).max(100),
-  age: z.number().int().min(0).max(200),
 });
 
 const saveAnimal = createServerFn({ method: 'POST' })
@@ -101,6 +105,20 @@ function ReadView({ animal, onEdit }: { animal: AnimalDTO; onEdit: () => void })
   );
 }
 
+function formatFieldErrors(errors: ReadonlyArray<unknown>): string {
+  return errors
+    .map((err) => {
+      if (!err) return '';
+      if (typeof err === 'string') return err;
+      if (typeof err === 'object' && 'message' in err && typeof err.message === 'string') {
+        return err.message;
+      }
+      return String(err);
+    })
+    .filter(Boolean)
+    .join(', ');
+}
+
 function EditForm({
   animal,
   onCancel,
@@ -110,84 +128,127 @@ function EditForm({
   onCancel: () => void;
   onSaved: () => void | Promise<void>;
 }) {
-  const [name, setName] = useState(animal.name);
-  const [species, setSpecies] = useState(animal.species);
-  const [age, setAge] = useState(animal.age);
-  const [saving, setSaving] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [submitError, setSubmitError] = useState<string | null>(null);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setSaving(true);
-    setError(null);
-    try {
-      await saveAnimal({ data: { id: animal.id, name, species, age } });
-      await onSaved();
-    } catch {
-      setError('Failed to save changes.');
-    } finally {
-      setSaving(false);
-    }
-  };
+  const form = useForm({
+    defaultValues: {
+      name: animal.name,
+      species: animal.species,
+      age: animal.age,
+    },
+    validators: {
+      onChange: animalFormSchema,
+    },
+    onSubmit: async ({ value }) => {
+      setSubmitError(null);
+      try {
+        await saveAnimal({ data: { id: animal.id, ...value } });
+        await onSaved();
+      } catch {
+        setSubmitError('Failed to save changes.');
+      }
+    },
+  });
 
   return (
-    <form onSubmit={handleSubmit}>
+    <form
+      onSubmit={(e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        form.handleSubmit();
+      }}
+    >
       <div className="flex items-baseline justify-between gap-4">
         <h1 className="text-3xl font-bold tracking-tight">Edit animal</h1>
         <span className="text-sm text-muted-foreground">#{animal.id}</span>
       </div>
 
       <div className="mt-6 grid gap-4 border-t pt-6">
-        <div className="grid gap-2">
-          <Label htmlFor="animal-name">Name</Label>
-          <Input
-            id="animal-name"
-            type="text"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            required
-            maxLength={100}
-          />
-        </div>
-        <div className="grid gap-2">
-          <Label htmlFor="animal-species">Species</Label>
-          <Input
-            id="animal-species"
-            type="text"
-            value={species}
-            onChange={(e) => setSpecies(e.target.value)}
-            required
-            maxLength={100}
-          />
-        </div>
-        <div className="grid gap-2">
-          <Label htmlFor="animal-age">Age</Label>
-          <Input
-            id="animal-age"
-            type="number"
-            value={age}
-            onChange={(e) => setAge(Number(e.target.value))}
-            required
-            min={0}
-            max={200}
-          />
-        </div>
+        <form.Field
+          name="name"
+          children={(field) => (
+            <div className="grid gap-2">
+              <Label htmlFor={field.name}>Name</Label>
+              <Input
+                id={field.name}
+                name={field.name}
+                type="text"
+                value={field.state.value}
+                onBlur={field.handleBlur}
+                onChange={(e) => field.handleChange(e.target.value)}
+                aria-invalid={!field.state.meta.isValid}
+                maxLength={100}
+              />
+              {!field.state.meta.isValid && field.state.meta.errors.length > 0 && (
+                <p className="text-sm text-destructive">{formatFieldErrors(field.state.meta.errors)}</p>
+              )}
+            </div>
+          )}
+        />
+        <form.Field
+          name="species"
+          children={(field) => (
+            <div className="grid gap-2">
+              <Label htmlFor={field.name}>Species</Label>
+              <Input
+                id={field.name}
+                name={field.name}
+                type="text"
+                value={field.state.value}
+                onBlur={field.handleBlur}
+                onChange={(e) => field.handleChange(e.target.value)}
+                aria-invalid={!field.state.meta.isValid}
+                maxLength={100}
+              />
+              {!field.state.meta.isValid && field.state.meta.errors.length > 0 && (
+                <p className="text-sm text-destructive">{formatFieldErrors(field.state.meta.errors)}</p>
+              )}
+            </div>
+          )}
+        />
+        <form.Field
+          name="age"
+          children={(field) => (
+            <div className="grid gap-2">
+              <Label htmlFor={field.name}>Age</Label>
+              <Input
+                id={field.name}
+                name={field.name}
+                type="number"
+                value={field.state.value}
+                onBlur={field.handleBlur}
+                onChange={(e) => field.handleChange(e.target.valueAsNumber)}
+                aria-invalid={!field.state.meta.isValid}
+                min={0}
+                max={200}
+              />
+              {!field.state.meta.isValid && field.state.meta.errors.length > 0 && (
+                <p className="text-sm text-destructive">{formatFieldErrors(field.state.meta.errors)}</p>
+              )}
+            </div>
+          )}
+        />
       </div>
 
-      {error && (
+      {submitError && (
         <Alert variant="destructive" className="mt-4">
-          <AlertDescription>{error}</AlertDescription>
+          <AlertDescription>{submitError}</AlertDescription>
         </Alert>
       )}
 
-      <div className="mt-6 flex justify-end gap-2">
-        <Button type="button" variant="outline" onClick={onCancel} disabled={saving}>
-          Cancel
-        </Button>
-        <Button type="submit" disabled={saving}>
-          {saving ? 'Saving…' : 'Save'}
-        </Button>
-      </div>
+      <form.Subscribe
+        selector={(state) => [state.canSubmit, state.isSubmitting] as const}
+        children={([canSubmit, isSubmitting]) => (
+          <div className="mt-6 flex justify-end gap-2">
+            <Button type="button" variant="outline" onClick={onCancel} disabled={isSubmitting}>
+              Cancel
+            </Button>
+            <Button type="submit" disabled={!canSubmit || isSubmitting}>
+              {isSubmitting ? 'Saving…' : 'Save'}
+            </Button>
+          </div>
+        )}
+      />
     </form>
   );
 }
