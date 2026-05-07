@@ -1,11 +1,14 @@
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
+import { createServerFn } from '@tanstack/react-start';
 import { getAnimals, type AnimalDTO } from '#/api/animals';
 
-export const Route = createFileRoute('/animals')({
-  loader: async () => {
-    const { data } = await getAnimals();
-    return data ?? [];
-  },
+const fetchAnimals = createServerFn({ method: 'GET' }).handler(async () => {
+  const { data } = await getAnimals();
+  return data ?? [];
+});
+
+export const Route = createFileRoute('/animals/')({
+  loader: () => fetchAnimals(),
   component: Animals,
 });
 
@@ -28,7 +31,7 @@ function Animals() {
           {animals.map((animal: AnimalDTO) => (
             <tr
               key={animal.id}
-              onClick={() => navigate({ to: '/animal/$id', params: { id: String(animal.id) } })}
+              onClick={() => navigate({ to: '/animals/$id', params: { id: String(animal.id) } })}
               className="cursor-pointer border-b last:border-0 hover:bg-gray-50"
             >
               <td className="py-2">{animal.name}</td>

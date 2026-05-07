@@ -5,7 +5,6 @@ using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddCors();
 builder.Services.AddOpenApi();
 builder.Services.AddDbContext<AnimalDbContext>(options =>
 {
@@ -47,11 +46,6 @@ using (var scope = app.Services.CreateScope())
         await db.SaveChangesAsync();
     }
 }
-
-app.UseCors(policy => policy
-    .AllowAnyOrigin()
-    .AllowAnyMethod()
-    .AllowAnyHeader());
 
 // app.UseHttpsRedirection();
 app.MapOpenApi("/openapi/{documentName}.json");
