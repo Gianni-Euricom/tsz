@@ -1,3 +1,5 @@
+Commit to git according to conventions.
+
 # How to commit
 
 ## Description
