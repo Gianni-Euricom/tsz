@@ -97,3 +97,13 @@ const fetchAnimal = createServerFn({ method: 'GET' })
     return data;
   });
 ```
+
+- Enable more strict openapi specs, better for the TS types generation.
+
+```c#
+builder.Services.ConfigureHttpJsonOptions(options =>
+{
+    options.SerializerOptions.NumberHandling = JsonNumberHandling.Strict;
+});
+```
+
