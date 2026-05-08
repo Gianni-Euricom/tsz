@@ -1,32 +1,23 @@
-Commit to git according to conventions.
+---
+name: git-commit
+description: Conventional Commits 1.0.0 toolkit for staging changes, formatting commit messages, and splitting unrelated work into separate commits in this repo. Trigger words: commit, commit changes, git commit, stage, conventional commit, make a commit
+---
 
-# How to commit
+# Committing changes in this repo
 
-## Description
+Follow these steps sequentially.
 
-Below we describe how we commit changes in this repo follow the steps below sequentially.
+## 1. Inspect the working tree
 
-## Commit separation
+Run `git status` and `git diff` (and `git diff --cached` if anything is already staged) to see exactly what will be committed.
 
-If needed gather changes that are related to each other and create separate commits for them
+## 2. Group related changes
 
-## Status
+If the diff spans unrelated concerns, create separate commits — one concern per commit. Stage only the files belonging to the current commit before running `git commit`.
 
-! `git status`
+## 3. Write the commit message
 
-## Dif
-
-! `git diff`
-
-## Commit message formatting
-
-Use commit conventions:
-
-# Conventional Commits 1.0.0
-
-A lightweight convention for commit messages that pairs with [SemVer](https://semver.org).
-
-## Format
+Use Conventional Commits 1.0.0:
 
 ```
 <type>[optional scope][!]: <description>
@@ -36,25 +27,25 @@ A lightweight convention for commit messages that pairs with [SemVer](https://se
 [optional footer(s)]
 ```
 
-## Types
+### Types
 
 - `feat`: new feature → **MINOR** version bump
 - `fix`: bug fix → **PATCH** version bump
 - `BREAKING CHANGE` (footer) or `!` (after type/scope) → **MAJOR** version bump
-- Other allowed types: `build`, `chore`, `ci`, `docs`, `style`, `refactor`, `perf`, `test`
+- Other allowed: `build`, `chore`, `ci`, `docs`, `style`, `refactor`, `perf`, `test`
 
-## Rules
+### Rules
 
-1. Commits MUST be prefixed with a type, followed by optional scope, optional `!`, then `: ` (colon + space).
+1. Prefix with type, optional scope, optional `!`, then `: ` (colon + space).
 2. Scope is a noun in parentheses describing a section of the codebase, e.g. `feat(parser):`.
-3. Description is a short summary immediately after the colon and space.
-4. Body (optional) starts one blank line after the description; can be multiple paragraphs.
+3. Description is a short summary immediately after the colon.
+4. Body (optional) starts one blank line after the description.
 5. Footers (optional) start one blank line after the body. Format: `Token: value` or `Token #value`. Tokens use `-` instead of spaces (e.g. `Reviewed-by`), except `BREAKING CHANGE`.
 6. Breaking changes MUST be indicated by `!` before the `:` and/or a `BREAKING CHANGE:` footer (uppercase required).
 7. `BREAKING-CHANGE` is synonymous with `BREAKING CHANGE`.
-8. Type/scope are case-insensitive (be consistent), but `BREAKING CHANGE` MUST be uppercase.
+8. Type/scope are case-insensitive (be consistent); `BREAKING CHANGE` MUST be uppercase.
 
-## Examples
+### Examples
 
 ```
 feat: allow provided config object to extend other configs
@@ -88,7 +79,7 @@ Reviewed-by: Z
 Refs: #123
 ```
 
-## SemVer Mapping
+### SemVer mapping
 
 | Commit                  | Release |
 | ----------------------- | ------- |
@@ -96,8 +87,8 @@ Refs: #123
 | `feat:`                 | MINOR   |
 | `BREAKING CHANGE` / `!` | MAJOR   |
 
-## Tips
+## 4. Tips
 
 - One concern per commit — split into multiple commits if it spans types.
 - For reverts, use `revert:` type with a `Refs:` footer listing reverted SHAs.
-- If a wrong type is used pre-merge, fix with `git rebase -i`.
+- If a wrong type is used pre-merge, fix with `git rebase` (non-interactive only — never use `-i`).
