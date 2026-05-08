@@ -1,0 +1,37 @@
+{
+  "skill_name": "piv-implement",
+  "evals": [
+    {
+      "id": 1,
+      "name": "faithful-plan-clean-execution",
+      "prompt": "/piv-implement add-readme-section",
+      "expected_output": "Skill confirms it picked the right plan, then walks the Approach steps in order. All Affected areas paths exist. Edits land in only those files. No tests/builds run. No git commit. Final message names the slug for piv-validate.",
+      "setup": "Before run: write .claude/plans/add-readme-section.md with a small clean plan (e.g. add a 'Local dev' section to README.md). Affected areas: README.md only. Approach: 2 steps (insert heading, insert body). Validation strategy: 'manually verify README renders'.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "name": "drift-missing-file",
+      "prompt": "/piv-implement rename-user-controller",
+      "expected_output": "Skill stops on the first Approach step because the file the plan references doesn't exist. Frames the divergence clearly: 'Plan says edit packages/api/Controllers/UserController.cs, but that file isn't here'. Asks user whether to update the plan or stop. Does not invent a path or grep for likely candidates without asking.",
+      "setup": "Before run: write .claude/plans/rename-user-controller.md whose Approach step 1 says 'rename packages/api/Controllers/UserController.cs to UsersController.cs'. The repo has no Controllers folder (it's minimal API style), so the path doesn't exist.",
+      "files": []
+    },
+    {
+      "id": 3,
+      "name": "out-of-scope-edit-needed",
+      "prompt": "/piv-implement tighten-favorites-dto",
+      "expected_output": "Skill realizes the change requires touching a file outside Affected areas (e.g. a shared DTO used elsewhere). Stops, names the file, asks whether to expand scope or split the work. Does not silently edit the out-of-scope file.",
+      "setup": "Before run: write .claude/plans/tighten-favorites-dto.md whose Affected areas lists only Program.cs but whose Approach step 2 effectively requires editing Models/SharedDto.cs (or similar) to compile.",
+      "files": []
+    },
+    {
+      "id": 4,
+      "name": "auto-pick-most-recent-plan",
+      "prompt": "/piv-implement",
+      "expected_output": "With no argument, skill lists .claude/plans/, picks the most recently modified file, names it back to the user with its mtime, and asks 'proceed?'. Does not silently start without confirmation.",
+      "setup": "Before run: place 2-3 plan files in .claude/plans/ with different mtimes; the most recent is the trivial README plan from eval 1.",
+      "files": []
+    }
+  ]
+}

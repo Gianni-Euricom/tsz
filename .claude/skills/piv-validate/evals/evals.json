@@ -1,0 +1,37 @@
+{
+  "skill_name": "piv-validate",
+  "evals": [
+    {
+      "id": 1,
+      "name": "all-checks-pass",
+      "prompt": "/piv-validate add-readme-section",
+      "expected_output": "Validation strategy is purely manual ('verify README renders'). Skill runs no commands, lists the manual check under 'Manual checks pending', and tells the user they need to confirm it themselves. Does not invent a `bun check` or any extra command.",
+      "setup": "Before run: plan with manual-only Validation strategy, working tree has the README change applied.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "name": "unit-test-failure",
+      "prompt": "/piv-validate add-favorites-endpoint",
+      "expected_output": "Skill runs `dotnet test packages/api.tests` (the exact command from the plan), captures the failure, reports passed/failed, and proposes a fix as a description (not a diff) with confidence: low or medium. Does not auto-edit. Asks per-failure whether to apply / send back to piv-implement / skip.",
+      "setup": "Before run: plan with Validation strategy = `dotnet test packages/api.tests`. Working tree contains a deliberately broken assertion in api.tests so the test fails.",
+      "files": []
+    },
+    {
+      "id": 3,
+      "name": "stale-generated-types",
+      "prompt": "/piv-validate add-favorites-endpoint",
+      "expected_output": "Skill runs `bun gen:api && bun check` (in packages/web) per the plan. `bun check` fails because schema.ts was already up to date but the new code references a field that gen:api just added — wait, more realistically: skill runs `bun check`, sees a type error referencing missing field, diagnoses that the cause is stale schema.ts, and proposes running `bun gen:api` with high confidence. Asks user to approve before running it.",
+      "setup": "Before run: plan with Validation strategy = `bun check` only (no gen:api). Working tree: api change adds a new field, web code references the new field, schema.ts is stale and missing the field.",
+      "files": []
+    },
+    {
+      "id": 4,
+      "name": "underspecified-validation",
+      "prompt": "/piv-validate fix-typo-in-component",
+      "expected_output": "Plan's Validation strategy is empty or just says 'looks right'. Skill stops and surfaces this as a piv-plan gap rather than inventing checks. Tells the user the plan is under-specified and lets them decide whether to add checks or accept as-is.",
+      "setup": "Before run: plan with empty/vague Validation strategy section.",
+      "files": []
+    }
+  ]
+}

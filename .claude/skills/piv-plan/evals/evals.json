@@ -1,0 +1,33 @@
+{
+  "skill_name": "piv-plan",
+  "evals": [
+    {
+      "id": 1,
+      "name": "frontend-only-feature",
+      "prompt": "/piv-plan add a dark-mode toggle to the topbar in packages/web. clicking it should flip a `dark` class on the <html> element and persist the choice to localStorage. icon from lucide-react.",
+      "expected_output": "A plan file at .claude/plans/dark-mode-toggle.md (or similar slug) with all required sections. Affected areas should list the topbar component, no api files. Validation strategy should reference `bun check`. ExitPlanMode is called with the plan content. Skill never edits component code.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "name": "cross-cutting-api-and-web",
+      "prompt": "/piv-plan add a 'favorites' feature: users can favorite/unfavorite items and see their list. needs new api endpoints (POST /api/favorites, DELETE /api/favorites/{id}, GET /api/favorites). on web, every item card gets a heart button that toggles state.",
+      "expected_output": "Plan covers both packages/api (new endpoint, EF model, migration) and packages/web (heart button component, mutation hooks). Validation strategy includes regenerating types via `bun gen:api` because api shapes changed. The plan flags the api-must-be-running constraint explicitly. Several Open questions are likely (auth model, item ownership rules).",
+      "files": []
+    },
+    {
+      "id": 3,
+      "name": "ambiguous-task-many-unknowns",
+      "prompt": "/piv-plan migrate the api from sqlite to postgres",
+      "expected_output": "Plan is dominated by Open questions: connection string source, local dev story, prod deploy target, EF migration approach, data backfill strategy. Affected areas covers api.csproj (package swap), Program.cs / DbContext config, integration test setup. Skill should resist drafting a confident Approach when so much is unknown.",
+      "files": []
+    },
+    {
+      "id": 4,
+      "name": "narrow-bug-fix",
+      "prompt": "/piv-plan the OpenAPI generator is producing optional TS fields where they should be required. f4ae10f shows how we tightened this before. plan another pass to find and fix any remaining cases.",
+      "expected_output": "Tight plan with a small Affected areas list (Program.cs OpenAPI config, possibly DTOs). Approach is short. Validation strategy includes `bun gen:api && bun check` so the generated schema.ts is verified. No background agents, no Explore.",
+      "files": []
+    }
+  ]
+}
