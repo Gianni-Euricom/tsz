@@ -9,7 +9,7 @@
     "dev": "vite --port 3000",
     "build": "vp build",
     "preview": "vp preview",
-    "test": "vitest run",
+    "test": "vp test",
     "check": "vp check",
     "check:fix": "vp check --fix",
     "fallow:dead": "fallow dead-code",
