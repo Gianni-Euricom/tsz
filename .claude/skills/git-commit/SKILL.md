@@ -91,19 +91,19 @@ Refs: #123
 
 Before running `git commit`, append a one-line entry for this commit to `CHANGELOG.md` in the repo root and stage it so it ships in the same commit. Create the file if it does not exist.
 
-Format — compact Keep-a-Changelog:
+Format — compact Keep-a-Changelog, grouped by date:
 
 ```
 # Changelog
 
-## [Unreleased]
+## [YYYY-MM-DD]
 - <type>(<scope>): <description>
 ```
 
 Rules:
 
 - One bullet per commit. Mirror the commit subject (type, scope, `!`, description) — no body, no footers.
-- Add under `## [Unreleased]`. Create that section if missing; do not create dated release sections (that happens at release time).
+- Group under `## [YYYY-MM-DD]` using today's date (ISO 8601, UTC). If a section for today already exists at the top, append to it; otherwise insert a new section above the previous day's.
 - Skip entries for `chore`, `ci`, `style`, `test`, `docs` unless they are user-visible.
 - When splitting work across multiple commits (see step 2), add one bullet per commit, each in its own commit.
 
