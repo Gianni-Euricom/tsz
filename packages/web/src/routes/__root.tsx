@@ -60,11 +60,6 @@ function RootLayout() {
               </Link>
             </Button>
             <Button asChild variant="ghost" size="sm">
-              <Link to="/animals" className="[&.active]:font-bold">
-                Animals
-              </Link>
-            </Button>
-            <Button asChild variant="ghost" size="sm">
               <Link to="/users" className="[&.active]:font-bold">
                 Users
               </Link>

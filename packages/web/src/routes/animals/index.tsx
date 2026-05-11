@@ -1,4 +1,4 @@
-import { createFileRoute, useNavigate } from '@tanstack/react-router';
+import { createFileRoute, notFound, useNavigate } from '@tanstack/react-router';
 import { createServerFn } from '@tanstack/react-start';
 import { getAnimals, type AnimalDTO } from '#/api/animals';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '#/components/ui/table';
@@ -8,6 +8,9 @@ const fetchAnimals = createServerFn({ method: 'GET' }).handler(async () => {
 });
 
 export const Route = createFileRoute('/animals/')({
+  beforeLoad: () => {
+    throw notFound();
+  },
   loader: () => fetchAnimals(),
   component: Animals,
 });

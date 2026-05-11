@@ -39,6 +39,9 @@ const saveAnimal = createServerFn({ method: 'POST' })
   });
 
 export const Route = createFileRoute('/animals/$id')({
+  beforeLoad: () => {
+    throw notFound();
+  },
   loader: ({ params }) => fetchAnimal({ data: Number(params.id) }),
   component: AnimalDetail,
 });
