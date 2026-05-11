@@ -13,5 +13,5 @@ export const errorMiddleware: Middleware = {
   },
 };
 
-export const client = createClient<paths>({ baseUrl: process.env.SERVER_URL });
+export const client = createClient<paths>({ baseUrl: process.env.SERVER_URL ?? 'http://localhost:5204' });
 client.use(errorMiddleware);
