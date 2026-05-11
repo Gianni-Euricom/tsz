@@ -87,7 +87,27 @@ Refs: #123
 | `feat:`                 | MINOR   |
 | `BREAKING CHANGE` / `!` | MAJOR   |
 
-## 4. Tips
+## 4. Update CHANGELOG.md
+
+Before running `git commit`, append a one-line entry for this commit to `CHANGELOG.md` in the repo root and stage it so it ships in the same commit. Create the file if it does not exist.
+
+Format — compact Keep-a-Changelog:
+
+```
+# Changelog
+
+## [Unreleased]
+- <type>(<scope>): <description>
+```
+
+Rules:
+
+- One bullet per commit. Mirror the commit subject (type, scope, `!`, description) — no body, no footers.
+- Add under `## [Unreleased]`. Create that section if missing; do not create dated release sections (that happens at release time).
+- Skip entries for `chore`, `ci`, `style`, `test`, `docs` unless they are user-visible.
+- When splitting work across multiple commits (see step 2), add one bullet per commit, each in its own commit.
+
+## 5. Tips
 
 - One concern per commit — split into multiple commits if it spans types.
 - For reverts, use `revert:` type with a `Refs:` footer listing reverted SHAs.
