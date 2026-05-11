@@ -4,8 +4,7 @@ import { getAnimals, type AnimalDTO } from '#/api/animals';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '#/components/ui/table';
 
 const fetchAnimals = createServerFn({ method: 'GET' }).handler(async () => {
-  const { data } = await getAnimals();
-  return data ?? [];
+  return await getAnimals();
 });
 
 export const Route = createFileRoute('/animals/')({
