@@ -10,6 +10,9 @@ const config = defineConfig({
   resolve: {
     tsconfigPaths: true,
   },
+  test: {
+    setupFiles: ['./tests/setup.ts'],
+  },
   plugins: [devtools(), tailwindcss(), tanstackStart(), viteReact()],
 });
 
