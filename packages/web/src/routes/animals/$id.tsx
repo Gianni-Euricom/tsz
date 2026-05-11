@@ -48,6 +48,8 @@ function AnimalDetail() {
   const router = useRouter();
   const [isEditing, setIsEditing] = useState(false);
 
+  if (!animal) return null;
+
   return (
     <main className="space-y-6">
       <Button asChild variant="ghost" size="sm" className="-ml-3">
@@ -132,9 +134,9 @@ function EditForm({
 
   const form = useForm({
     defaultValues: {
-      name: animal.name,
-      species: animal.species,
-      age: animal.age,
+      name: animal.name ?? '',
+      species: animal.species ?? '',
+      age: Number(animal.age) || 0,
     },
     validators: {
       onChange: animalFormSchema,
@@ -142,7 +144,7 @@ function EditForm({
     onSubmit: async ({ value }) => {
       setSubmitError(null);
       try {
-        await saveAnimal({ data: { id: animal.id, ...value } });
+        await saveAnimal({ data: { id: Number(animal.id), ...value } });
         await onSaved();
       } catch {
         setSubmitError('Failed to save changes.');
