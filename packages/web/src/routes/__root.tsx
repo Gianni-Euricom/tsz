@@ -64,6 +64,11 @@ function RootLayout() {
                 Animals
               </Link>
             </Button>
+            <Button asChild variant="ghost" size="sm">
+              <Link to="/users" className="[&.active]:font-bold">
+                Users
+              </Link>
+            </Button>
           </div>
           <ThemeToggle />
         </nav>

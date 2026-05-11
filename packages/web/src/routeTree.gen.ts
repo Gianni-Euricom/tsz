@@ -10,7 +10,10 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as UsersIndexRouteImport } from './routes/users/index'
 import { Route as AnimalsIndexRouteImport } from './routes/animals/index'
+import { Route as UsersNewRouteImport } from './routes/users/new'
+import { Route as UsersIdRouteImport } from './routes/users/$id'
 import { Route as AnimalsIdRouteImport } from './routes/animals/$id'
 
 const IndexRoute = IndexRouteImport.update({
@@ -18,9 +21,24 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const UsersIndexRoute = UsersIndexRouteImport.update({
+  id: '/users/',
+  path: '/users/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AnimalsIndexRoute = AnimalsIndexRouteImport.update({
   id: '/animals/',
   path: '/animals/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const UsersNewRoute = UsersNewRouteImport.update({
+  id: '/users/new',
+  path: '/users/new',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const UsersIdRoute = UsersIdRouteImport.update({
+  id: '/users/$id',
+  path: '/users/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AnimalsIdRoute = AnimalsIdRouteImport.update({
@@ -32,31 +50,56 @@ const AnimalsIdRoute = AnimalsIdRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/animals/$id': typeof AnimalsIdRoute
+  '/users/$id': typeof UsersIdRoute
+  '/users/new': typeof UsersNewRoute
   '/animals/': typeof AnimalsIndexRoute
+  '/users/': typeof UsersIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/animals/$id': typeof AnimalsIdRoute
+  '/users/$id': typeof UsersIdRoute
+  '/users/new': typeof UsersNewRoute
   '/animals': typeof AnimalsIndexRoute
+  '/users': typeof UsersIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/animals/$id': typeof AnimalsIdRoute
+  '/users/$id': typeof UsersIdRoute
+  '/users/new': typeof UsersNewRoute
   '/animals/': typeof AnimalsIndexRoute
+  '/users/': typeof UsersIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/animals/$id' | '/animals/'
+  fullPaths:
+    | '/'
+    | '/animals/$id'
+    | '/users/$id'
+    | '/users/new'
+    | '/animals/'
+    | '/users/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/animals/$id' | '/animals'
-  id: '__root__' | '/' | '/animals/$id' | '/animals/'
+  to: '/' | '/animals/$id' | '/users/$id' | '/users/new' | '/animals' | '/users'
+  id:
+    | '__root__'
+    | '/'
+    | '/animals/$id'
+    | '/users/$id'
+    | '/users/new'
+    | '/animals/'
+    | '/users/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AnimalsIdRoute: typeof AnimalsIdRoute
+  UsersIdRoute: typeof UsersIdRoute
+  UsersNewRoute: typeof UsersNewRoute
   AnimalsIndexRoute: typeof AnimalsIndexRoute
+  UsersIndexRoute: typeof UsersIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -68,11 +111,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/users/': {
+      id: '/users/'
+      path: '/users'
+      fullPath: '/users/'
+      preLoaderRoute: typeof UsersIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/animals/': {
       id: '/animals/'
       path: '/animals'
       fullPath: '/animals/'
       preLoaderRoute: typeof AnimalsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/users/new': {
+      id: '/users/new'
+      path: '/users/new'
+      fullPath: '/users/new'
+      preLoaderRoute: typeof UsersNewRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/users/$id': {
+      id: '/users/$id'
+      path: '/users/$id'
+      fullPath: '/users/$id'
+      preLoaderRoute: typeof UsersIdRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/animals/$id': {
@@ -88,7 +152,10 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AnimalsIdRoute: AnimalsIdRoute,
+  UsersIdRoute: UsersIdRoute,
+  UsersNewRoute: UsersNewRoute,
   AnimalsIndexRoute: AnimalsIndexRoute,
+  UsersIndexRoute: UsersIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

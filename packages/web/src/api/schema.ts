@@ -172,10 +172,298 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  '/api/users': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: {
+      parameters: {
+        query?: never;
+        header?: never;
+        path?: never;
+        cookie?: never;
+      };
+      requestBody?: never;
+      responses: {
+        /** @description OK */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['User'][];
+          };
+        };
+      };
+    };
+    put?: never;
+    post: {
+      parameters: {
+        query?: never;
+        header?: never;
+        path?: never;
+        cookie?: never;
+      };
+      requestBody: {
+        content: {
+          'application/json': components['schemas']['CreateUserRequest'];
+        };
+      };
+      responses: {
+        /** @description OK */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content?: never;
+        };
+      };
+    };
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/users/{id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: {
+      parameters: {
+        query?: never;
+        header?: never;
+        path: {
+          id: string;
+        };
+        cookie?: never;
+      };
+      requestBody?: never;
+      responses: {
+        /** @description OK */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content?: never;
+        };
+      };
+    };
+    put: {
+      parameters: {
+        query?: never;
+        header?: never;
+        path: {
+          id: string;
+        };
+        cookie?: never;
+      };
+      requestBody: {
+        content: {
+          'application/json': components['schemas']['UpdateUserRequest'];
+        };
+      };
+      responses: {
+        /** @description OK */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content?: never;
+        };
+      };
+    };
+    post?: never;
+    delete: {
+      parameters: {
+        query?: never;
+        header?: never;
+        path: {
+          id: string;
+        };
+        cookie?: never;
+      };
+      requestBody?: never;
+      responses: {
+        /** @description OK */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content?: never;
+        };
+      };
+    };
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/users/{userId}/leaves': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: {
+      parameters: {
+        query?: never;
+        header?: never;
+        path: {
+          userId: string;
+        };
+        cookie?: never;
+      };
+      requestBody: {
+        content: {
+          'application/json': components['schemas']['AddUserLeaveRequest'];
+        };
+      };
+      responses: {
+        /** @description OK */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content?: never;
+        };
+      };
+    };
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/users/{userId}/leaves/{userLeaveId}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put: {
+      parameters: {
+        query?: never;
+        header?: never;
+        path: {
+          userId: string;
+          userLeaveId: string;
+        };
+        cookie?: never;
+      };
+      requestBody: {
+        content: {
+          'application/json': components['schemas']['UpdateUserLeaveRequest'];
+        };
+      };
+      responses: {
+        /** @description OK */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content?: never;
+        };
+      };
+    };
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/roles': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: {
+      parameters: {
+        query?: never;
+        header?: never;
+        path?: never;
+        cookie?: never;
+      };
+      requestBody?: never;
+      responses: {
+        /** @description OK */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['Role'][];
+          };
+        };
+      };
+    };
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/leaves': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: {
+      parameters: {
+        query?: never;
+        header?: never;
+        path?: never;
+        cookie?: never;
+      };
+      requestBody?: never;
+      responses: {
+        /** @description OK */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': components['schemas']['Leave'][];
+          };
+        };
+      };
+    };
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
 }
 export type webhooks = Record<string, never>;
 export interface components {
   schemas: {
+    AddUserLeaveRequest: {
+      /** Format: uuid */
+      leaveId: string;
+      /** Format: int32 */
+      totalDays?: null | number;
+    };
     Animal: {
       /** Format: int32 */
       id: number;
@@ -194,11 +482,72 @@ export interface components {
       /** Format: int32 */
       age: number;
     };
+    CreateUserRequest: {
+      name: string;
+      email: string;
+      roleIds: string[];
+    };
+    Leave: {
+      /** Format: uuid */
+      id: string;
+      name: string;
+      isUnlimited: boolean;
+      /** Format: int32 */
+      defaultTotalDays?: null | number;
+    };
+    Role: {
+      /** Format: uuid */
+      id: string;
+      name: string;
+    };
     UpdateAnimalRequest: {
       name: string;
       species: string;
       /** Format: int32 */
       age: number;
+    };
+    UpdateUserLeaveRequest: {
+      /** Format: int32 */
+      totalDays?: null | number;
+    };
+    UpdateUserRequest: {
+      name: string;
+      email: string;
+      isActive: boolean;
+      roleIds: string[];
+    };
+    User: {
+      /** Format: uuid */
+      id: string;
+      name: string;
+      email: string;
+      isActive: boolean;
+      userRoles: components['schemas']['UserRole'][];
+      userLeaves: components['schemas']['UserLeave'][];
+    };
+    UserLeave: {
+      /** Format: uuid */
+      id: string;
+      /** Format: uuid */
+      userId: string;
+      /** Format: uuid */
+      leaveId: string;
+      leave: components['schemas']['Leave'];
+      /** Format: int32 */
+      year: number;
+      /** Format: int32 */
+      totalDays?: null | number;
+      /** Format: int32 */
+      takenDays: number;
+      /** Format: int32 */
+      balanceDays?: null | number;
+    };
+    UserRole: {
+      /** Format: uuid */
+      userId: string;
+      /** Format: uuid */
+      roleId: string;
+      role: components['schemas']['Role'];
     };
   };
   responses: never;

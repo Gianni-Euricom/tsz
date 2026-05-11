@@ -1,6 +1,7 @@
 using System.Reflection;
 using System.Text.Json.Serialization;
 using Api.Modules.Animals;
+using Api.Modules.Users;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi;
 using Scalar.AspNetCore;
@@ -14,6 +15,12 @@ builder.Services.AddDbContext<AnimalDbContext>(options =>
            ?? "Data Source=animals.db");
 });
 builder.Services.AddScoped<AnimalService>();
+builder.Services.AddDbContext<UserDbContext>(options =>
+{
+    options.UseSqlite(builder.Configuration.GetConnectionString("UsersConnection")
+           ?? "Data Source=users.db");
+});
+builder.Services.AddScoped<UserService>();
 builder.Services.ConfigureHttpJsonOptions(options =>
 {
     options.SerializerOptions.NumberHandling = JsonNumberHandling.Strict;
@@ -71,6 +78,73 @@ using (var scope = app.Services.CreateScope())
     }
 }
 
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<UserDbContext>();
+    db.Database.EnsureCreated();
+
+    if (!await db.Roles.AnyAsync())
+    {
+        db.Roles.AddRange(
+            new Role { Name = "Consultant" },
+            new Role { Name = "Admin" },
+            new Role { Name = "SysAdmin" },
+            new Role { Name = "Financial controller" },
+            new Role { Name = "Client manager" }
+        );
+        await db.SaveChangesAsync();
+    }
+
+    if (!await db.Leaves.AnyAsync())
+    {
+        db.Leaves.AddRange(
+            new Leave { Name = "Holiday",      IsUnlimited = false, DefaultTotalDays = 20 },
+            new Leave { Name = "ADV",          IsUnlimited = false, DefaultTotalDays = 5 },
+            new Leave { Name = "Anciënniteit", IsUnlimited = false, DefaultTotalDays = 0 },
+            new Leave { Name = "Sick",         IsUnlimited = true,  DefaultTotalDays = null }
+        );
+        await db.SaveChangesAsync();
+    }
+
+    if (!await db.Users.AnyAsync())
+    {
+        var service = scope.ServiceProvider.GetRequiredService<UserService>();
+        var roleByName = await db.Roles.ToDictionaryAsync(r => r.Name);
+
+        var samples = new (string Name, string Email, string[] Roles)[]
+        {
+            ("Alice Janssens",   "alice@example.com",   new[] { "Consultant" }),
+            ("Bram De Vos",      "bram@example.com",    new[] { "Consultant", "Client manager" }),
+            ("Chloé Peeters",    "chloe@example.com",   new[] { "Admin" }),
+            ("Dieter Vermeulen", "dieter@example.com",  new[] { "SysAdmin" }),
+            ("Eva Maes",         "eva@example.com",     new[] { "Financial controller", "Admin" })
+        };
+
+        User? lastCreated = null;
+        foreach (var (name, email, roleNames) in samples)
+        {
+            var roleIds = roleNames.Select(rn => roleByName[rn].Id).ToList();
+            lastCreated = await service.CreateAsync(new CreateUserRequest
+            {
+                Name = name,
+                Email = email,
+                RoleIds = roleIds,
+            });
+        }
+
+        if (lastCreated is not null)
+        {
+            await service.UpdateAsync(lastCreated.Id, new UpdateUserRequest
+            {
+                Name = lastCreated.Name,
+                Email = lastCreated.Email,
+                IsActive = false,
+                RoleIds = lastCreated.UserRoles.Select(ur => ur.RoleId).ToList(),
+            });
+        }
+    }
+}
+
 // app.UseHttpsRedirection();
 app.MapOpenApi("/openapi/{documentName}.json");
 app.MapScalarApiReference("/openapi", options =>
@@ -85,5 +159,8 @@ app.MapGet("/", () => new
 });
 
 AnimalEndpoints.Map(app);
+UserEndpoints.Map(app);
+RoleEndpoints.Map(app);
+LeaveEndpoints.Map(app);
 
 app.Run();
